@@ -9,13 +9,53 @@ export const LoginContainer = styled.div`
 `
 
 export const LoginForm = styled.form`
-    min-width:300px;
-    max-width: 500px;
-    width: 50%;
-    padding: 2rem 1rem;
+    width: 500px;
+    padding: 3rem 1rem;
     background-color: white;
     display: flex;
     flex-direction: column;
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+`
+
+export const FormInfoContainer= styled.div`
+    width: calc(100% - 1rem - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    h2{
+        margin-bottom: 1.5rem;
+    }
+`
+
+export const LoginButtonContainer = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+`
+
+
+export const ForgotPassword = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 5px;           
+    p{
+        font-size: 0.875rem;
+    }
+
+    a{
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+    }
 `
