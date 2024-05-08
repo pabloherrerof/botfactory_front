@@ -1,5 +1,6 @@
 "use client";
 import Button from "@/components/Button/Button";
+import { Checkbox, CheckboxContainer } from "@/components/Form/Checkbox";
 import Input, { InputContainer } from "@/components/Form/Input";
 import Label from "@/components/Form/Label";
 import { Main } from "@/components/Layout/Layout";
@@ -14,6 +15,7 @@ import { LogoContainer } from "@/components/Logo/Logo";
 import { useAuth } from "@/hooks/auth";
 import { toastError } from "@/lib/notifications";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiSolidMessageDots } from "react-icons/bi";
@@ -128,6 +130,16 @@ const Page = () => {
                 </motion.div>
                 <motion.div variants={itemVariants}>
                   <LoginButtonContainer>
+                    <CheckboxContainer>
+                    <Checkbox
+                          id="remember"
+                          onChange={(event) =>
+                            setShouldRemember(event.target.checked)
+                          }
+                        />
+                        <Label htmlFor="remember">Remember me</Label>
+                        
+                    </CheckboxContainer>
                     <ForgotPassword>
                       <p>Forgot password?</p>
                       <Link href="/forgot-password" className="underline">
