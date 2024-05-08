@@ -1,9 +1,17 @@
+"use client";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { useAuth } from "@/hooks/auth";
+import { Main } from "@/components/Layout/Layout";
 
 export default function Home() {
+ /*  const { user } = useAuth({ middleware: "auth" });
+
+  if (!user) {
+    return <div>LOADING</div>;
+  } */
   return (
-    <main className={styles.main}>
+    <Main>
       <div className={styles.description}>
         <p>
           Get started by editing&nbsp;
@@ -90,6 +98,6 @@ export default function Home() {
           </p>
         </a>
       </div>
-    </main>
+    </Main>
   );
 }
