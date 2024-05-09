@@ -3,13 +3,20 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { useAuth } from "@/hooks/auth";
 import { Main } from "@/components/Layout/Layout";
+import { useRouter } from "next/navigation";
+import { MoonLoader } from "react-spinners";
+import { useStore } from "@/store/store";
 
 export default function Home() {
- /*  const { user } = useAuth({ middleware: "auth" });
+  const { user, logout } = useAuth({ middleware: 'auth' })
+  const components = useStore((state) => state.componentExit);
+
+  console.log(components.login)
 
   if (!user) {
-    return <div>LOADING</div>;
-  } */
+      return <Main><MoonLoader color="#000" size={50} /></Main>
+  }
+
   return (
     <Main>
       <div className={styles.description}>
@@ -98,6 +105,7 @@ export default function Home() {
           </p>
         </a>
       </div>
+      <button onClick={() => logout()}>Login</button>
     </Main>
   );
 }

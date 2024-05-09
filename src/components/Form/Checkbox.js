@@ -16,9 +16,6 @@ export const Checkbox = styled.input.attrs({ type: 'checkbox' })`
   &:focus {
     border-color: #cbd5e1; 
     outline: none;
-    ring: 2px; 
-    ring-color: #c7d2fe; 
-    ring-opacity: 50%;
   }
 `;
 

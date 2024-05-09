@@ -12,4 +12,9 @@ const LabelStyled = styled.label`
     font-weight: 600;
     line-height: 1.75rem;
     text-align: center;
+
+    @media (max-width: 517px) {
+        font-size: 11px;
+    }
+    
 `

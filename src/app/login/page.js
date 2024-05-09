@@ -13,26 +13,30 @@ import {
 } from "@/components/Login/Login";
 import { LogoContainer } from "@/components/Logo/Logo";
 import { useAuth } from "@/hooks/auth";
-import { toastError } from "@/lib/notifications";
-import { motion } from "framer-motion";
+import { toastError, toastSuccess } from "@/lib/notifications";
+import { useStore } from "@/store/store";
+import { AnimatePresence, delay, motion } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiSolidMessageDots } from "react-icons/bi";
 
 const containerVariants = {
-  hidden: { opacity: 0, scale: 0.5 },
+  hidden: { opacity: 0, scale: 0 },
   visible: {
+    rotate: 360,
     opacity: 1,
     scale: 1,
     transition: {
       type: "spring",
-      stiffness: 260,
-      damping: 20,
+      stiffness: 230,
+      damping: 40,
       delayChildren: 0.4,
       staggerChildren: 0.2,
+      delay: 1
     },
   },
+  exit: { opacity: 0, scale: 0.5, transition: { duration: 0.5 } },
 };
 
 const itemVariants = {
@@ -42,7 +46,9 @@ const itemVariants = {
     opacity: 1,
     transition: { type: "spring", stiffness: 300 },
   },
+  exit: { opacity: 0, scale: 0.5, transition: { duration: 0.5 } },
 };
+
 
 const Page = () => {
   const router = useRouter();
@@ -51,15 +57,22 @@ const Page = () => {
   const [shouldRemember, setShouldRemember] = useState(false);
   const [errors, setErrors] = useState([]);
   const [status, setStatus] = useState(null);
-  const searchParams = useSearchParams();
-  const reset = searchParams.get("reset");
+/*   const searchParams = useSearchParams();
+  const reset = searchParams.get("reset"); */
 
+
+
+const componentExit = useStore((state) => state.componentExit);
+  
   const { login } = useAuth({
     middleware: "guest",
     redirectIfAuthenticated: "/",
   });
 
-  useEffect(() => {
+
+console.log(componentExit.login)
+
+ /*  useEffect(() => {
     if (router.reset?.length > 0 && errors.length === 0) {
       setStatus(atob(router.reset));
     } else {
@@ -68,91 +81,111 @@ const Page = () => {
     if (reset) {
       toastSuccess("Contraseña cambiada con éxito");
     }
-  });
-
+  }, [reset, router.reset, errors]);
+ */
   const submitForm = async (event) => {
     event.preventDefault();
 
-    login({
-      email,
-      password,
-      remember: shouldRemember,
-      setErrors: (errors) => {
-        setErrors(errors);
-        if (errors && Object.keys(errors).length > 0) {
-          if (errors.email) {
-            toastError(errors.email[0]);
-          }
-          if (errors.password) {
-            toastError(errors.password[0]);
-          }
-        }
-      },
-      setStatus,
-    });
+
+      login({
+        email,
+        password,
+        remember: shouldRemember,
+        setErrors: (errors) => {
+          setErrors(errors);
+          if (errors && Object.keys(errors).length > 0) {
+            if (errors.email) {
+              toastError(errors.email[0]);
+            }
+            if (errors.password) {
+              toastError(errors.password[0]);
+            }
+          } 
+        },
+        setStatus,
+      })
   };
 
   return (
     <Main>
       <LoginContainer>
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ rotate: 360, scale: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 230,
-            damping: 40,
-          }}
-        >
-          <motion.div
-              variants={containerVariants}
+        <AnimatePresence>
+          {!componentExit.login && (
+            <motion.div
               initial="hidden"
               animate="visible"
+              exit="exit"
+              variants={containerVariants}
+              key="form"
             >
-          <LoginForm>
-            
-              <LogoContainer>
-                <BiSolidMessageDots />
-              </LogoContainer>
-              <FormInfoContainer onSubmit={submitForm}>
-                <h2>Bot Factory Dashboard</h2>
-                <motion.div variants={itemVariants}>
-                  <InputContainer>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" required autoFocus />
-                  </InputContainer>
-                </motion.div>
-                <motion.div variants={itemVariants}>
-                  <InputContainer>
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" required autoFocus />
-                  </InputContainer>
-                </motion.div>
-                <motion.div variants={itemVariants}>
-                  <LoginButtonContainer>
-                    <CheckboxContainer>
-                    <Checkbox
-                          id="remember"
-                          onChange={(event) =>
-                            setShouldRemember(event.target.checked)
-                          }
-                        />
-                        <Label htmlFor="remember">Remember me</Label>
-                        
-                    </CheckboxContainer>
-                    <ForgotPassword>
-                      <p>Forgot password?</p>
-                      <Link href="/forgot-password" className="underline">
-                                Click here
-                      </Link>
-                    </ForgotPassword>
-                    <Button>Login</Button>
-                  </LoginButtonContainer>
-                </motion.div>
-              </FormInfoContainer>
-          </LoginForm>
-          </motion.div>
-        </motion.div>
+              <LoginForm onSubmit={submitForm}>
+                  <>
+                    <motion.div
+                      animate={{ y: [0, 10, 0] }}
+                      transition={{
+                        duration: 2,
+                        ease: "easeInOut",
+                        repeat: Infinity, 
+                      }}
+                    >
+                      <LogoContainer>
+                        <BiSolidMessageDots />
+                      </LogoContainer>
+                    </motion.div>
+                    <FormInfoContainer>
+                      <h2>Bot Factory Dashboard</h2>
+                      <motion.div variants={itemVariants}>
+                        <InputContainer>
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            autoFocus
+                          />
+                        </InputContainer>
+                      </motion.div>
+                      <motion.div variants={itemVariants}>
+                        <InputContainer className="last">
+                          <Label htmlFor="password">Password</Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            autoFocus
+                          />
+                        </InputContainer>
+                      </motion.div>
+                      <motion.div variants={itemVariants}>
+                        <LoginButtonContainer>
+                          <CheckboxContainer>
+                            <Checkbox
+                              id="remember"
+                              onChange={(event) =>
+                                setShouldRemember(event.target.checked)
+                              }
+                            />
+                            <Label htmlFor="remember">Remember me</Label>
+                          </CheckboxContainer>
+                          <ForgotPassword>
+                            <p>Forgot password?</p>
+                            <Link href="/forgot-password" className="underline">
+                              Click here
+                            </Link>
+                          </ForgotPassword>
+                          <Button>Login</Button>
+                        </LoginButtonContainer>
+                      </motion.div>
+                    </FormInfoContainer>
+                  </>
+              </LoginForm>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </LoginContainer>
     </Main>
   );

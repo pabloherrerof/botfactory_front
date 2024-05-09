@@ -3,16 +3,16 @@ import styled from "styled-components";
 const StyledButton = styled.button`
   border-radius: 0.375rem; 
   font-weight: 600;
-  font-size: 0.75rem; 
+  font-size: 1rem; 
   color: white; 
   text-transform: uppercase;
   letter-spacing: 0.1em; 
   background-color: #000; 
   padding: 0.5rem 1rem; 
-  height: 40px;
+  height: 45px;
   width: 200px;
   border: none;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   cursor: pointer;
   transition: background-color 0.15s ease-in-out; // Tailwind transition ease-in-out duration-150
 
@@ -35,8 +35,8 @@ const StyledButton = styled.button`
   }
 `;
 
-const Button = ({ type = 'submit', className = "", ...props }) => (
-    <StyledButton type={type} className={className} {...props} />
+const Button = ({type, ...props }) => (
+    <StyledButton type={type} {...props} />
 );
 
 export default Button;

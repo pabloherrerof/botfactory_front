@@ -12,7 +12,7 @@ export default Input;
 
 const StyledInput = styled.input`
   transition: 0.3s;
-  min-width: 300px;
+  width: 100%;
   border-radius: 0.375rem; 
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
   background-color: white !important;
@@ -31,9 +31,12 @@ const StyledInput = styled.input`
 export const InputContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.1rem;
     align-items: start;
     justify-content: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 
+    &.last{
+        margin-bottom: 1.5rem;
+    }
     `
