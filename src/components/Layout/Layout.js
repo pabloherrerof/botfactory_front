@@ -35,7 +35,7 @@ export const MainContainer = styled.div`
     max-width: 500px;
   }
 
-  @media (max-width: 550px){
+  @media (max-width: 570px){
 
     h1{
       font-size: 40px;

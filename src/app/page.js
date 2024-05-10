@@ -25,6 +25,25 @@ const motionStyle = {
   textAlign: "center",
 }
 
+const navVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 12,
+      delay: 0,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -1000,
+    transition: { duration: 0.5 },
+  },
+
+};
+
 const containerVariants = {
   hidden: { opacity: 0 }, 
   visible: {
@@ -40,7 +59,7 @@ const containerVariants = {
   },
   exit: {
     opacity: 0,
-    y: -100, 
+    y: -1000, 
     transition: { duration: 0.5 }
   }
 };
@@ -68,9 +87,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
   const [error, setError] = useState('')
-
-
-
+  const componentExit = useStore((state) => state.componentExit);
 
   useEffect(() => {
       setLoading(true);
@@ -101,8 +118,7 @@ export default function Home() {
 
   if (loading) {
     return (<>
-      <Nav />
-      <Main login="login">
+      <Main>
         <MoonLoader color="#000" size={50} />
       </Main>
       </>
@@ -110,9 +126,17 @@ export default function Home() {
   }
 if(user && !loading){
   return (<>
-  <Nav />
-    <Main>
-      <AnimatePresence> 
+      <AnimatePresence>
+        <motion.div
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={navVariants}
+        >
+      <Nav />
+      </motion.div>
+        <Main>
+        {!componentExit.clients && (
         <motion.div
           initial="hidden"
           animate="visible"
@@ -140,12 +164,9 @@ if(user && !loading){
 
 
         </motion.div>
-
-       
+        )}
+            </Main>
       </AnimatePresence>
-      
-      
-    </Main>
     </>
   )
 }}
