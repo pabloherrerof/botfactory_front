@@ -27,6 +27,7 @@ const motionStyle = {
   rowGap: "20px",
   columnGap: "20px",
   textAlign: "center",
+  marginTop: "40px"
 };
 
 const containerVariants = {

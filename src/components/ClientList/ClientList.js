@@ -20,7 +20,6 @@ const style = {
   zIndex: "70",
   flexWrap: "wrap",
   textAlign: "center",
-  marginTop: "40px",
 };
 
 const modalVariants = {
@@ -89,14 +88,16 @@ export const ClientList = ({ data }) => {
       animate="visible"
       exit="exit"
       variants={containerVariants}
+      style={{marginTop: "40px"}}
     >
-      {(!addClient && !editClient) && (
+      {(!addClient && !editClient) ? (
             <motion.div variants={itemVariants} style={style}>
         <AddButton onClick={() => setAddClient(true)}>
           <IoMdAddCircleOutline />
           Add Client
         </AddButton>
-      </motion.div>)
+      </motion.div> 
+      ): addClient ? (<h2>Add Client</h2>) : (<h2>Edit Client</h2>)
       }
       <ClientListContainer>
         {!addClient && !editClient ? (<>
@@ -194,7 +195,6 @@ export const ClientListItem = styled.li`
   padding: 2.5rem 2.5rem;
   padding-top: 3rem;
   transition: 0.3s;
-  margin-top: ${(props) => (props.big ? "40px" : "1rem")};
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
