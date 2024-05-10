@@ -37,16 +37,18 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     axios
       .post("/login", props)
+      .then(() => mutate())
       .then(() => {
         updateComponentExit("login");
       })
-      .then(() => mutate())
       .then(() => {
-        setTimeout(() => {
-          router.push("/");
-          resetComponentExit();
-        }, 1000);
+        router.push("/");
       })
+      .then(() => 
+        setTimeout(() => {
+          resetComponentExit();
+        } 
+        , 2000))
       .catch((error) => {
         if (error.response.status !== 422) throw error;
 
@@ -98,26 +100,28 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     if (!error) {
       await axios
         .post("/logout")
+        .then(() => mutate())
         .then(() => {
           updateComponentExit("clients");
         })
-        .then(() => mutate())
-        .then(() =>
+        .then(() => {
+         
+            router.push("/");}
+        ).then(() => 
           setTimeout(() => {
-            router.push("/");
             resetComponentExit();
-          }, 1000)
-        );
+          } 
+          , 2000))
+    } else{
+      window.location.pathname = "/login";
     }
-
-    window.location.pathname = "/login";
   };
 
   useEffect(() => {
     if (middleware === "guest" && redirectIfAuthenticated && user) {
-      if (Object.values(componentExit).every((value) => false)) {
+    if (Object.values(componentExit).every((value) => false)) {
         router.push(redirectIfAuthenticated);
-      }
+      } 
     }
     if (window.location.pathname === "/verify-email" && user?.email_verified_at)
       router.push(redirectIfAuthenticated);

@@ -90,7 +90,7 @@ export const ClientList = ({ data }) => {
       exit="exit"
       variants={containerVariants}
     >
-      {(!addClient || !editClient) && (
+      {(!addClient && !editClient) && (
             <motion.div variants={itemVariants} style={style}>
         <AddButton onClick={() => setAddClient(true)}>
           <IoMdAddCircleOutline />
@@ -100,8 +100,6 @@ export const ClientList = ({ data }) => {
       }
       <ClientListContainer>
         {!addClient && !editClient ? (<>
-      
-
       {    data.map((client) => (
             <motion.div variants={itemVariants} key={client.id}>
               <ClientListItem>
@@ -146,7 +144,7 @@ export const ClientList = ({ data }) => {
                 </ClientListItemContainer>
                 <ButtonsContainer>
                   <CardButton color="">
-                    <FaEdit className="icon" onClick={() => setEditClient(client.id)}/>
+                    <FaEdit className="icon" onClick={() => setEditClient(client)}/>
                   </CardButton>
                   <CardButton color="#da5649">
                     <MdDelete className="icon" />
@@ -196,7 +194,7 @@ export const ClientListItem = styled.li`
   padding: 2.5rem 2.5rem;
   padding-top: 3rem;
   transition: 0.3s;
-  margin-top: ${(props) => (props.big ? "0" : "1rem")};
+  margin-top: ${(props) => (props.big ? "40px" : "1rem")};
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
@@ -234,6 +232,7 @@ export const ButtonsContainer = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 1rem;
+  max-width: ${(props) => (props.big ? "300px" : "auto")};
 
   @media (max-width: 570px) {
     margin-top: 1rem;
@@ -258,6 +257,8 @@ export const ClientListDetails = styled.div`
   height: 100%;
   gap: 0.5rem;
   width: ${(props) => (props.big ? "300px" : "auto")};
+  margin-bottom: ${(props) => (props.big ? "1rem" : "0")};
+  text-align: start;
 
   h5 {
     font-size: 22px;
@@ -269,6 +270,10 @@ export const ClientListDetails = styled.div`
     font-size: 13px;
     color: #333;
     margin-bottom: 0;
+  }
+
+  @media (max-width: 570px) {
+    width: 250px;
   }
 `;
 
@@ -293,4 +298,8 @@ export const ClientPhotoContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 1rem;
+
+  @media (max-width: 570px) {
+    width: 250px;
+  }
 `;

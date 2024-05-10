@@ -7,7 +7,6 @@ export const Main = styled.main`
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  background: var(--background);
   background: var(--background-linear);
 `;
 
@@ -31,7 +30,7 @@ export const MainContainer = styled.div`
 
   p{
     font-size: 18px;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     max-width: 500px;
   }
 

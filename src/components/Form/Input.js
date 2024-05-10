@@ -58,4 +58,25 @@ export const InputContainer = styled.div`
     &.last{
         margin-bottom: 1.5rem;
     }
+
     `
+  export const Select = styled.select`
+     transition: 0.3s;
+  width: 100%;
+  border-radius: 0.375rem; 
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+  background-color: white !important;
+  border: 1.5px solid #d1d5db;
+  height: 35px;
+  padding: 6px 12px;
+  font-size: 14px;
+  min-width: 200px;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  &:focus {
+    border-color: #4f46e5; 
+    outline: none; 
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.5); 
+  }
+  `

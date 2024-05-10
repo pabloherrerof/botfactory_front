@@ -7,7 +7,7 @@ const StyledButton = styled.button`
   color: white; 
   text-transform: uppercase;
   letter-spacing: 0.1em; 
-  background-color: #000; 
+  background-color: ${props => props.color ? props.color : '#000'}; 
   padding: 0.5rem 1rem; 
   height: 45px;
   width: 200px;
@@ -61,7 +61,6 @@ export const AddButton = styled.div`
   justify-content: center;
   gap: 0.5rem;
   align-items: center;
-  margin-top: 50px;
 
   &:hover {
     scale: 1.1;
