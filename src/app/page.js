@@ -27,7 +27,6 @@ const motionStyle = {
   rowGap: "20px",
   columnGap: "20px",
   textAlign: "center",
-  marginTop: "40px"
 };
 
 const containerVariants = {
@@ -68,6 +67,7 @@ export default function Home() {
   const [clients, setClients] = useState([]);
   const [error, setError] = useState("");
   const componentExit = useStore((state) => state.componentExit);
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -92,7 +92,7 @@ export default function Home() {
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, showIntro]);
 
   if (loading) {
     return (
@@ -118,23 +118,27 @@ export default function Home() {
             >
               <Nav />
               <Main>
-                <MainContainer>
-                  <motion.div variants={itemVariants}>
-                    <h1>Welcome to BotFactory!</h1>
-                  </motion.div>
-                  <motion.div variants={itemVariants}>
-                    <p>
-                      Here you can create, edit, update and delete your clients.
-                      Search by name, surname or population or filter them!
-                    </p>
-                  </motion.div>
-
+                <MainContainer padding={showIntro}>
+                  {showIntro && (
+                    <>
+                      <motion.div variants={itemVariants}>
+                        <h1>Welcome to BotFactory!</h1>
+                      </motion.div>
+                      <motion.div variants={itemVariants}>
+                        <p>
+                          Here you can create, edit, update and delete your
+                          clients. Search by name, surname or population or
+                          filter them!
+                        </p>
+                      </motion.div>
+                      <motion.div variants={itemVariants} style={motionStyle}>
+                        <SearchBar />
+                        <Filters />
+                      </motion.div>
+                    </>
+                  )}
                   <motion.div variants={itemVariants} style={motionStyle}>
-                    <SearchBar />
-                    <Filters />
-                  </motion.div>
-                  <motion.div variants={itemVariants} style={motionStyle}>
-                    <ClientList data={clients} />
+                    <ClientList data={clients} setShowIntro={setShowIntro} />
                   </motion.div>
                 </MainContainer>
               </Main>

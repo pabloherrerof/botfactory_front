@@ -89,9 +89,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
   return {
     user,
     login,
-    forgotPassword,
-    resetPassword,
-    resendEmailVerification,
     logout,
   };
 };

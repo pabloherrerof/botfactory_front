@@ -17,11 +17,11 @@ export const MainContainer = styled.div`
   width: 100vw;
   background-color: #f1f3f3;
   min-height: 100vh;
-  padding: 200px 2rem;
+  padding-top: ${(props) => (props.padding ? "200px" : "120px")};
   text-align: center;
   position: relative;
+  padding-bottom: 50px;
   
-
   h1{
     font-size: 40px;
     margin-bottom: 10px;
@@ -31,6 +31,12 @@ export const MainContainer = styled.div`
   p{
     font-size: 18px;
     margin-bottom: 40px;
+    max-width: 500px;
+  }
+
+  h2{
+    font-size: 30px;
+    margin-bottom: 10px;
     max-width: 500px;
   }
 

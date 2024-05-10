@@ -51,7 +51,7 @@ export const AddButton = styled.div`
   padding: 1rem;
   border-radius: 5px;
   width: 40%;
-  width: 300px;
+  width: 200px;
   color: white;
   font-size: 20px;
   font-weight: 700;

@@ -78,7 +78,7 @@ const itemVariants = {
   },
 };
 
-export const ClientList = ({ data }) => {
+export const ClientList = ({ data, setShowIntro }) => {
   const [addClient, setAddClient] = useState(false);
   const [editClient, setEditClient] = useState(false);
 
@@ -92,12 +92,14 @@ export const ClientList = ({ data }) => {
     >
       {(!addClient && !editClient) ? (
             <motion.div variants={itemVariants} style={style}>
-        <AddButton onClick={() => setAddClient(true)}>
+        <AddButton onClick={() => {setAddClient(true)
+        setShowIntro(false)
+        }}>
           <IoMdAddCircleOutline />
           Add Client
         </AddButton>
       </motion.div> 
-      ): addClient ? (<h2>Add Client</h2>) : (<h2>Edit Client</h2>)
+      ): null
       }
       <ClientListContainer>
         {!addClient && !editClient ? (<>
@@ -106,15 +108,7 @@ export const ClientList = ({ data }) => {
               <ClientListItem>
                 <ClientListItemContainer>
                   <ClientPhotoContainer>
-                    {!client.photo ? (
-                      <>
-                        <IoMdContact />
-                      </>
-                    ) : (
-                      <>
-                        <ClientPhoto src={client.photo} />
-                      </>
-                    )}
+                        <ClientPhoto src={client.photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${client.photo}` : "/user.jpg"} />
                     <ClientStatus active={client.active}>
                       {client.active === 1 ? "Active" : "Inactive"}
                     </ClientStatus>
@@ -130,8 +124,12 @@ export const ClientList = ({ data }) => {
                       {client.population}
                     </p>
                     <p>
+                      <strong>Birthday: </strong>
+                      {new Date(client.birthday).toISOString().split("T")[0]}
+                    </p>
+                    <p>
                       <strong>Category: </strong>
-                      {client.category}
+                      {client.category_id}
                     </p>
                     <p>
                       <strong>Created: </strong>
@@ -145,7 +143,10 @@ export const ClientList = ({ data }) => {
                 </ClientListItemContainer>
                 <ButtonsContainer>
                   <CardButton color="">
-                    <FaEdit className="icon" onClick={() => setEditClient(client)}/>
+                    <FaEdit className="icon" onClick={() => {
+                        window.scrollTo(0, 0)
+                        setEditClient(client)
+                        setShowIntro(false)}}/>
                   </CardButton>
                   <CardButton color="#da5649">
                     <MdDelete className="icon" />
@@ -157,7 +158,7 @@ export const ClientList = ({ data }) => {
           </>
         ) : (
           <motion.div variants={modalVariants}>
-            <AddEditClient setAddClient={setAddClient} client={editClient} setEditClient={setEditClient}>
+            <AddEditClient setAddClient={setAddClient} client={editClient} setEditClient={setEditClient} setShowIntro={setShowIntro}>
             </AddEditClient>
           </motion.div>
         )}
@@ -301,5 +302,35 @@ export const ClientPhotoContainer = styled.div`
 
   @media (max-width: 570px) {
     width: 250px;
+  }
+`;
+
+export const ClientForm = styled.form`
+  background-color: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  height: 100%;
+  width: 500px;
+  height: ${(props) => (props.big ? "auto" : "400px")};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  padding: 2.5rem 2.5rem;
+  padding-top: 3rem;
+  transition: 0.3s;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  svg {
+    color: lightblue;
+    font-size: 150px;
+  }
+  @media (max-width: 570px) {
+    width: 300px;
+    height: 100%;
   }
 `;
