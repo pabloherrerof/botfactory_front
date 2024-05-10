@@ -14,29 +14,91 @@ const StyledButton = styled.button`
   border: none;
   margin-top: 1.2rem;
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out; // Tailwind transition ease-in-out duration-150
+  transition: background-color 0.15s ease-in-out; 
 
   &:hover {
-    background-color: #1f2937; // Tailwind .hover:bg-gray-700
+    background-color: #1f2937; 
   }
 
   &:active {
-    background-color: #111827; // Tailwind .active:bg-gray-900
+    background-color: #111827; 
   }
 
   &:focus {
     outline: none;
     border-color: #111827; // Tailwind .focus:border-gray-900
-    box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.5); // Tailwind .ring .ring-gray-300
+    box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.5); 
   }
 
   &:disabled {
-    opacity: 0.25; // Tailwind .disabled:opacity-25
+    opacity: 0.25; 
   }
 `;
+
 
 const Button = ({type, ...props }) => (
     <StyledButton type={type} {...props} />
 );
 
 export default Button;
+
+export const AddButton = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--background);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  border-radius: 5px;
+  width: 40%;
+  width: 300px;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 50px;
+
+  &:hover {
+    scale: 1.1;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+  }
+
+  svg {
+    font-size: 24px;
+  }
+`;
+
+
+
+export const CardButton = styled.div`
+  display: flex;
+  background: ${props => props.color ? props.color : '#000'};
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+
+  &:hover {
+    scale: 1.1;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+  }
+
+  .icon{
+    font-size: 22px;
+    color: white;
+  }
+`;

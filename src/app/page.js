@@ -1,111 +1,153 @@
 "use client";
-import Image from "next/image";
-import styles from "./page.module.css";
 import { useAuth } from "@/hooks/auth";
-import { Main } from "@/components/Layout/Layout";
-import { useRouter } from "next/navigation";
+import { Main, MainContainer, TitleContainer } from "@/components/Layout/Layout";
 import { MoonLoader } from "react-spinners";
 import { useStore } from "@/store/store";
+import { Nav } from "@/components/Nav/Nav";
+import { AnimatePresence, motion } from "framer-motion";
+import { SearchBar } from "@/components/SearchBar/SearchBar";
+import Filters from "@/components/Filters/Filters";
+import { useEffect, useState } from "react";
+import { AbsoluteButton } from "@/components/Button/Button";
+import { ClientList } from "@/components/ClientList/ClientList";
+import { toastError } from "@/lib/notifications";
+import axios from "@/lib/axios";
+
+const motionStyle = {
+  maxWidth: "1200px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: "70",
+  flexWrap: "wrap",
+  rowGap: "20px",
+  columnGap: "20px",
+  textAlign: "center",
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 }, 
+  visible: {
+    opacity: 1, 
+    transition: {
+      type: "spring",
+      stiffness: 100, 
+      damping: 12, 
+      delay: 1, 
+      delayChildren: 1, 
+      staggerChildren: 0.5
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -100, 
+    transition: { duration: 0.5 }
+  }
+};
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0, 
+    opacity: 1, 
+    transition: {
+      type: "spring",
+      stiffness: 200, 
+      damping: 20 
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -20, 
+    transition: { duration: 0.5 }
+  }
+};
 
 export default function Home() {
   const { user, logout } = useAuth({ middleware: 'auth' })
   const components = useStore((state) => state.componentExit);
+  const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [error, setError] = useState('')
 
-  console.log(components.login)
 
-  if (!user) {
-      return <Main><MoonLoader color="#000" size={50} /></Main>
+
+
+  useEffect(() => {
+      setLoading(true);
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+  }, [user]); 
+
+  useEffect(() => {
+    if (!user) return
+    const fetchData = async () => {
+        try {
+            axios.defaults.withCredentials = true
+            const response = await axios.get(`/api/clients?user=${user.id}`)
+            setClients(response.data.data)
+        } catch (error) {
+            setError(
+                'We could not find information. Try again later.',
+            )
+            toastError('Server error. Try again later.')
+        } finally {
+        }
+    }
+    fetchData()
+}, [user])
+
+  if (loading) {
+    return (<>
+      <Nav />
+      <Main login="login">
+        <MoonLoader color="#000" size={50} />
+      </Main>
+      </>
+    );
   }
-
-  return (
+if(user && !loading){
+  return (<>
+  <Nav />
     <Main>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+      <AnimatePresence> 
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+        > 
+            <MainContainer>
+            <motion.div variants={itemVariants} >
+                <h1>Welcome to BotFactory!</h1>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                <p>Here you can create, edit, update and delete your clients. Search by name, surname or population or filter them!</p>
+                </motion.div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+                <motion.div variants={itemVariants} style={motionStyle}>
+                    <SearchBar />
+                    <Filters />
+                </motion.div>
+                <motion.div variants={itemVariants} style={motionStyle}>
+                    <ClientList data={clients} />
+                </motion.div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+            </MainContainer>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-      <button onClick={() => logout()}>Login</button>
+        </motion.div>
+
+       
+      </AnimatePresence>
+      
+      
     </Main>
-  );
-}
+    </>
+  )
+}}
+
+
