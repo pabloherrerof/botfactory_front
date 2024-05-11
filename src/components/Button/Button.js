@@ -61,6 +61,7 @@ export const AddButton = styled.div`
   justify-content: center;
   gap: 0.5rem;
   align-items: center;
+  z-index: 0;
 
   &:hover {
     scale: 1.1;
@@ -80,8 +81,8 @@ export const CardButton = styled.div`
   background: ${props => props.color ? props.color : '#000'};
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   border-radius: 5px;
-  width: 40px;
-  height: 40px;
+  width: ${props => props.size ? props.size : '40px'};
+  height: ${props => props.size ? props.size : '40px'};
   font-weight: 500;
   text-transform: uppercase;
   cursor: pointer;
@@ -89,6 +90,8 @@ export const CardButton = styled.div`
   justify-content: center;
   gap: 0.5rem;
   align-items: center;
+  font-size: 10px;
+  color: white;
 
   &:hover {
     scale: 1.1;
@@ -96,8 +99,9 @@ export const CardButton = styled.div`
     transition: 0.3s;
   }
 
-  .icon{
-    font-size: 22px;
+  svg{
+    font-size: 20px;
     color: white;
+    margin-bottom: 0;
   }
 `;

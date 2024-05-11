@@ -13,36 +13,12 @@ import {
 import { Logo } from "@/components/Logo/Logo";
 import { useAuth } from "@/hooks/auth";
 import { toastError } from "@/lib/notifications";
-import { useStore } from "@/store/store";
+import { useAnimationStore } from "@/store/store";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { containerVariants, itemVariants } from "./animation";
 
-const containerVariants = {
-  hidden: { opacity: 0, scale: 0 },
-  visible: {
-    rotate: 360,
-    opacity: 1,
-    scale: 1,
-    transition: {
-      type: "spring",
-      stiffness: 230,
-      damping: 40,
-      delayChildren: 0.4,
-      staggerChildren: 0.2,
-      delay: 1,
-    },
-  },
-  exit: { opacity: 0, scale: 0, transition: { duration: 0.5 } },
-};
 
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 300 },
-  }, 
-};
 
 const Page = () => {
   const [email, setEmail] = useState("");
@@ -50,14 +26,12 @@ const Page = () => {
   const [shouldRemember, setShouldRemember] = useState(false);
   const [errors, setErrors] = useState([]);
   const [status, setStatus] = useState(null);
-  const componentExit = useStore((state) => state.componentExit);
+  const componentExit = useAnimationStore((state) => state.componentExit);
 
   const { login } = useAuth({
     middleware: "guest",
     redirectIfAuthenticated: "/",
   });
-
-  console.log(componentExit)
 
   const submitForm = async (event) => {
     event.preventDefault();
@@ -65,7 +39,6 @@ const Page = () => {
     login({
       email,
       password,
-      remember: shouldRemember,
       setErrors: (errors) => {
         setErrors(errors);
         if (errors && Object.keys(errors).length > 0) {

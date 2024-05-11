@@ -2,11 +2,10 @@ import { Poppins } from 'next/font/google'
 import "./globals.css";
 import StyledComponentsRegistry from "@/lib/registry";
 import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer } from 'react-toastify';
-import AppInitializer from '@/lib/zustand';
+import { ToastContainer } from 'react-toastify';;
 
 const poppins = Poppins({   weight: ['400', '700'],
-subsets: ['latin'],});
+subsets: ['latin']});
 
 export const metadata = {
   title: "BotFactory",

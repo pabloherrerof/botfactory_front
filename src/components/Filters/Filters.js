@@ -1,30 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
+import Input, { InputContainer, Select } from "../Form/Input";
+import Label from "../Form/Label";
+import { ButtonsContainer } from "../ClientList/ClientList";
+import { CardButton } from "../Button/Button";
+import { useCategoriesStore, useParamsStore } from "@/store/store";
 
-const filtersDropdownStyle = {
-    position: "absolute",
-    top: "50px",
-    right: "0",
-    width: "160px",
-    backgroundColor: "white",
-    borderRadius: "0.375rem",
-    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-    display: "block",
-    minHeight: "100px",
-    zIndex: "998",
-};
-
-const Filters = ({ filters, setFilters }) => {
+const Filters = () => {
   const [open, setOpen] = useState(false);
+  const categories = useCategoriesStore((state) => state.categories);
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+  const setParams = useParamsStore((state) => state.setParams);
+  const resetFilters = useParamsStore((state) => state.resetFilters);
+  const params = useParamsStore((state) => state.params);
+  const [filters, setFilters] = useState({
+    category: "",
+    active: "",
+    bigger_than: "",
+    smaller_than: "",
+  });
 
+  useEffect(() => {
+    if(categories.length === 0)
+      fetchCategories();
+  }, [categories]);
+
+  useEffect(() => {
+    if(params.category || params.active || params.bigger_than || params.smaller_than) {
+      setFilters({
+        category: params.category || "All",
+        active: params.active || "",
+        bigger_than: params.bigger_than || 0,
+        smaller_than: params.smaller_than || 0,
+      });
+    }
+  }, [params]);
+
+const onClickApplyHandler = () => {
+  setParams("category", filters.category === "All" ? null : filters.category);
+  setParams("active", filters.active === "" ? null : filters.active);
+  setParams("bigger_than", filters.bigger_than === 0 ? null : filters.bigger_than);
+  setParams("smaller_than", filters.smaller_than === 0 ? null : filters.smaller_than);
+}
+
+
+const onClickResetHandler = () => {
+  resetFilters();
+}
+
+console.log(filters)
   return (
+    <FiltersDropdownContainer>
     <FiltersDropdown open={open} onClick={() => setOpen(!open)}>
       Filter <MdKeyboardArrowDown />
+      </FiltersDropdown>
+    
       <AnimatePresence>
         {open && (
-          <motion.div
+          <FilterOptions
             key="filterOptions"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 , decelerate: true
@@ -32,19 +67,74 @@ const Filters = ({ filters, setFilters }) => {
 
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
-            style={filtersDropdownStyle}
           >
-            <h4>Options</h4>
-            {/* Put more filter options here */}
-          </motion.div>
+            <InputContainer>
+            <Label htmlFor="active">Status</Label>
+            <Select
+              name="active"
+              id="active"
+              minwidth="100px"
+              onChange={(e) => setFilters({ ...filters, active: e.target.value })}
+              value={filters.active}
+            >
+              <option value="">All</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option> 
+            </Select>
+            </InputContainer>
+            <InputContainer>
+            <Label htmlFor="category">Category</Label>
+            <Select
+              name="category"
+              id="category"
+              minwidth="100px"
+              onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+              value={filters.category}
+            >
+               <option value={null} >All</option>
+             {categories &&
+              categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+            </InputContainer>
+            <InputContainer>
+            <Label htmlFor="greater_than">Age greater than: {filters.bigger_than} </Label>
+            <Input minwidth="100px" type="range" name="age" id="age" min="0" max="100" className="range"
+              onChange={(e) => setFilters({ ...filters, bigger_than: e.target.value })}
+              value={filters.bigger_than}
+              />
+            </InputContainer>
+            <InputContainer>
+            <Label htmlFor="category">Age smaller than: {filters.smaller_than} </Label>
+            <Input minwidth="100px" type="range" name="age" id="age" min="0" max="100" className="range"
+            onChange={(e) => setFilters({ ...filters, smaller_than: e.target.value })}
+            value={filters.smaller_than}
+            />
+            </InputContainer>
+            <ButtonsContainer>
+            <CardButton size={"50px"} color="#da5649" onClick={onClickResetHandler}>Reset</CardButton>
+              <CardButton size={"50px"} onClick={onClickApplyHandler}>Apply</CardButton>
+            </ButtonsContainer>
+          </FilterOptions>
         )}
       </AnimatePresence>
-    </FiltersDropdown>
+
+    </FiltersDropdownContainer>
   );
 };
 
-const FiltersDropdown = styled.button`
+const FiltersDropdownContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
+  z-index: 999;
+`;
+
+const FiltersDropdown = styled(motion.div)`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -61,7 +151,7 @@ const FiltersDropdown = styled.button`
   border: none;
   cursor: pointer;
   transition: background-color 0.15s ease-in-out 0.1s;
-  z-index: 999;
+  padding: 1rem 0.5rem;
 
   svg {
     font-size: 28px;
@@ -70,6 +160,21 @@ const FiltersDropdown = styled.button`
     transform: ${(props) => (props.open ? "rotate(180deg)" : "rotate(0deg)")};
     transition: transform 0.3s;
   }
+`;
+
+const FilterOptions = styled(motion.div)`
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 160px;
+  background-color: white;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  display: block;
+  min-height: 100px;
+  z-index: 998;
+  padding: 1rem;
+  background-color: lightgrey;
 `;
 
 export default Filters;

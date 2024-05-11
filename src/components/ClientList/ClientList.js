@@ -8,75 +8,13 @@ import { IoMdContact } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
-import { InputContainer } from "../Form/Input";
-import Label from "../Form/Label";
 import { AddEditClient } from "../AddClient/AddEditClient";
+import Pagination from "../Pagination/Pagination";
+import { containerVariants, itemVariants, modalVariants, style } from "./animation";
+import { FaUserAltSlash } from "react-icons/fa";
+import { calcularEdad } from "@/util/util";
 
-const style = {
-  maxWidth: "1200px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: "70",
-  flexWrap: "wrap",
-  textAlign: "center",
-};
 
-const modalVariants = {
-  hidden: { opacity: 0, y: 1000 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 40,
-      delay: 0,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: 1000,
-    transition: { duration: 0.5 },
-  },
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 12,
-      delay: 2,
-      delayChildren: 3,
-      staggerChildren: 0.2,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -100,
-    transition: { duration: 0.5 },
-  },
-};
-const itemVariants = {
-  hidden: { x: 30, opacity: 0 },
-  visible: {
-    x: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 200,
-      damping: 20,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -20,
-    transition: { duration: 0.5 },
-  },
-};
 
 export const ClientList = ({ data, setShowIntro }) => {
   const [addClient, setAddClient] = useState(false);
@@ -88,84 +26,84 @@ export const ClientList = ({ data, setShowIntro }) => {
       animate="visible"
       exit="exit"
       variants={containerVariants}
-      style={{marginTop: "40px"}}
+      style={{ marginTop: "40px" }}
     >
-      {(!addClient && !editClient) ? (
-            <motion.div variants={itemVariants} style={style}>
-        <AddButton onClick={() => {setAddClient(true)
-        setShowIntro(false)
-        }}>
-          <IoMdAddCircleOutline />
-          Add Client
-        </AddButton>
-      </motion.div> 
-      ): null
-      }
-      <ClientListContainer>
-        {!addClient && !editClient ? (<>
-      {    data.map((client) => (
-            <motion.div variants={itemVariants} key={client.id}>
-              <ClientListItem>
-                <ClientListItemContainer>
-                  <ClientPhotoContainer>
-                        <ClientPhoto src={client.photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${client.photo}` : "/user.jpg"} />
-                    <ClientStatus active={client.active}>
-                      {client.active === 1 ? "Active" : "Inactive"}
-                    </ClientStatus>
-                  </ClientPhotoContainer>
-                  <ClientListDetails>
-                    <h5>{client.name}</h5>
-                    <p>
-                      <strong>Email: </strong>
-                      {client.email}
-                    </p>
-                    <p>
-                      <strong>Population: </strong>
-                      {client.population}
-                    </p>
-                    <p>
-                      <strong>Birthday: </strong>
-                      {new Date(client.birthday).toISOString().split("T")[0]}
-                    </p>
-                    <p>
-                      <strong>Category: </strong>
-                      {client.category_id}
-                    </p>
-                    <p>
-                      <strong>Created: </strong>
-                      {new Date(client.created_at).toISOString().split("T")[0]}
-                    </p>
-                    <p>
-                      <strong>Last update: </strong>
-                      {new Date(client.updated_at).toISOString().split("T")[0]}
-                    </p>
-                  </ClientListDetails>
-                </ClientListItemContainer>
-                <ButtonsContainer>
-                  <CardButton color="">
-                    <FaEdit className="icon" onClick={() => {
-                        window.scrollTo(0, 0)
-                        setEditClient(client)
-                        setShowIntro(false)}}/>
-                  </CardButton>
-                  <CardButton color="#da5649">
-                    <MdDelete className="icon" />
-                  </CardButton>
-                </ButtonsContainer>
-              </ClientListItem>
-            </motion.div>
-          ))}
-          </>
-        ) : (
+      {(!addClient && !editClient) && (
+        <motion.div variants={itemVariants} style={style}>
+          <AddButton onClick={() => {
+            setAddClient(true);
+            setShowIntro(false);
+          }}>
+            <IoMdAddCircleOutline />
+            Add Client
+          </AddButton>
+        </motion.div>
+      )}
+  
+      {!addClient && !editClient ? (
+        <>
+          {data.length !== 0 ? (
+            <ClientListContainer>
+           { data.map((client) => (
+              <motion.div variants={itemVariants} key={client.id}>
+                <ClientListItem>
+                  <ClientListItemContainer>
+                    <ClientPhotoContainer>
+                      <ClientPhoto src={client.photo ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${client.photo}` : "/user.jpg"} />
+                      <ClientStatus active={client.active}>
+                        {client.active === 1 ? "Active" : "Inactive"}
+                      </ClientStatus>
+                    </ClientPhotoContainer>
+                    <ClientListDetails>
+                      <h5>{client.name}</h5>
+                      <p><strong>Email: </strong>{client.email}</p>
+                      <p><strong>Population: </strong>{client.population}</p>
+                      <p><strong>Birthday: </strong>{new Date(client.birthday).toISOString().split("T")[0]}</p>
+                      <p><strong>Age: </strong>{ calcularEdad(new Date(client.birthday).toISOString().split("T")[0])}</p>
+                      <p><strong>Category: </strong>{client.category_id}</p>
+                      <p><strong>Created: </strong>{new Date(client.created_at).toISOString().split("T")[0]}</p>
+                      <p><strong>Last update: </strong>{new Date(client.updated_at).toISOString().split("T")[0]}</p>
+                    </ClientListDetails>
+                  </ClientListItemContainer>
+                  <ButtonsContainer>
+                    <CardButton color="">
+                      <FaEdit className="icon" onClick={() => {
+                        window.scrollTo(0, 0);
+                        setEditClient(client);
+                        setShowIntro(false);
+                      }}/>
+                    </CardButton>
+                    <CardButton color="#da5649">
+                      <MdDelete className="icon" />
+                    </CardButton>
+                  </ButtonsContainer>
+                </ClientListItem>
+              </motion.div>
+            ))}
+            <Pagination />
+            </ClientListContainer>
+          ) : (
+            <ClientListContainer>
+              <motion.div variants={itemVariants}>
+                <ClientListItem>
+                  <FaUserAltSlash />
+                  <h3>No clients found</h3>
+                </ClientListItem>
+              </motion.div>
+            </ClientListContainer>
+          )}
+        </>
+      ) : (
+        <ClientListContainer>
           <motion.div variants={modalVariants}>
-            <AddEditClient setAddClient={setAddClient} client={editClient} setEditClient={setEditClient} setShowIntro={setShowIntro}>
-            </AddEditClient>
+            <AddEditClient setAddClient={setAddClient} client={editClient} setEditClient={setEditClient} setShowIntro={setShowIntro} />
           </motion.div>
-        )}
-      </ClientListContainer>
+        </ClientListContainer>
+      )}
     </motion.div>
-  );
+  )
 };
+  
 
 const ClientListContainer = styled.ul`
   list-style: none;
@@ -202,8 +140,9 @@ export const ClientListItem = styled.li`
   }
 
   svg {
-    color: lightblue;
-    font-size: 150px;
+    color: #e74c3c;
+    font-size: 100px;
+    margin-bottom: 1rem;
   }
   @media (max-width: 570px) {
     width: 300px;

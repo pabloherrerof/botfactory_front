@@ -1,6 +1,5 @@
 import { IoMdContact } from "react-icons/io";
 import {
-  ClientListItem,
   ClientListDetails,
   ClientListItemContainer,
   ButtonsContainer,
@@ -14,6 +13,8 @@ import Button from "../Button/Button";
 import { useEffect, useState } from "react";
 import { toastError, toastSuccess } from "@/lib/notifications";
 import axios from "@/lib/axios";
+import { useCategoriesStore, useClientsStore, useParamsStore } from "@/store/store";
+import { toast } from "react-toastify";
 
 export const AddEditClient = ({
   setAddClient,
@@ -21,7 +22,6 @@ export const AddEditClient = ({
   setEditClient,
   setShowIntro,
 }) => {
-  const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
   const [clientData, setClientData] = useState({
     name: "",
@@ -32,6 +32,13 @@ export const AddEditClient = ({
     active: 1,
   });
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const resetFilters = useParamsStore((state) => state.resetFilters);
+  const categories = useCategoriesStore((state) => state.categories);
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
+  const editClient = useClientsStore((state) => state.editClient);
+  const createClient = useClientsStore((state) => state.createClient);
+
+
 
   useEffect(() => {
     if (client) {
@@ -46,35 +53,25 @@ export const AddEditClient = ({
     }
   }, [client]);
 
+
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        axios.defaults.withCredentials = true;
-        const response = await axios.get(`/api/categories`);
-        setCategories(response.data);
-      } catch (error) {
-        setError("We could not find information. Try again later.");
-        toastError("Server error. Try again later.");
-      } finally {
-      }
-    };
-    fetchData();
-  }, []);
+if(categories.length === 0)
+      fetchCategories();
+  }, [categories]);
 
   const onCreateSubmit = () => {
     return async (e) => {
       e.preventDefault();
-      try {
-        console.log(clientData);
-        axios.defaults.withCredentials = true;
-        await axios.post(`/api/clients`, clientData);
-        toastSuccess("Client added successfully.");
-        setAddClient(false);
-        setShowIntro(true);
+      try{
+        const response = await createClient(clientData)
+        if(response) {
+          setShowIntro(true);
+          setEditClient(false);
+          resetFilters();
+        }
       } catch (error) {
         setError("We could not find information. Try again later.");
-        toastError(error.response.data.message)
-        
       }
     };
   };
@@ -82,32 +79,18 @@ export const AddEditClient = ({
   const onEditSubmit = () => {
     return async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-      formData.append("name", client.name);
-      formData.append("surname", client.surname);
-      formData.append("email", client.email);
-      formData.append("population", client.population);
-      formData.append("category_id", client.category_id);
-      formData.append("birthday", client.birthday);
-      formData.append("active", client.active);
-      formData.append("photo", client.photo);
-      formData.append('_method', 'PUT')
-      try {
-        axios.defaults.withCredentials = true;
-        await axios.post(`/api/clients/${client.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        toastSuccess("Client updated successfully.");
-        setEditClient(false);
-        setShowIntro(true);
+      try{
+        const response = await editClient(client)
+        if(response) {
+          setShowIntro(true);
+          setEditClient(false);
+          resetFilters();
+        }
       } catch (error) {
         setError("We could not find information. Try again later.");
-        toastError("Server error. Try again later.");
       }
-    };
   };
+};
 
   const handleInputChange = (field, value) => {
     if (client) setEditClient((prev) => ({ ...prev, [field]: value }));
@@ -226,6 +209,7 @@ export const AddEditClient = ({
             setAddClient(false);
             setEditClient(false);
             setShowIntro(true);
+            resetFilters();
           }}
         >
           Cancel

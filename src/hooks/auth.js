@@ -2,15 +2,15 @@ import useSWR from "swr";
 import axios from "@/lib/axios";
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useStore } from "@/store/store";
+import { useAnimationStore } from "@/store/store";
 
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
   const router = useRouter();
   const params = useParams();
 
-  const componentExit = useStore((state) => state.componentExit);
-  const updateComponentExit = useStore((state) => state.setExit);
-  const resetComponentExit = useStore((state) => state.resetExit);
+  const componentExit = useAnimationStore((state) => state.componentExit);
+  const updateComponentExit = useAnimationStore((state) => state.setExit);
+  const resetComponentExit = useAnimationStore((state) => state.resetExit);
 
   const {
     data: user,
@@ -79,6 +79,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
   useEffect(() => {
     if (middleware === "guest" && redirectIfAuthenticated && user) {
+      router.push(redirectIfAuthenticated);
     if (Object.values(componentExit).every((value) => false)) {
         router.push(redirectIfAuthenticated);
       } 

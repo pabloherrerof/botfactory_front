@@ -8,7 +8,7 @@ export default Label
 
 const LabelStyled = styled.label`
     color: black;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     line-height: 1.75rem;
     text-align: center;

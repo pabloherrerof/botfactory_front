@@ -3,71 +3,30 @@ import { useAuth } from "@/hooks/auth";
 import {
   Main,
   MainContainer,
-  TitleContainer,
 } from "@/components/Layout/Layout";
 import { MoonLoader } from "react-spinners";
-import { useStore } from "@/store/store";
+import { useAnimationStore, useParamsStore } from "@/store/store";
 import { Nav } from "@/components/Nav/Nav";
 import { AnimatePresence, motion } from "framer-motion";
 import { SearchBar } from "@/components/SearchBar/SearchBar";
 import Filters from "@/components/Filters/Filters";
 import { useEffect, useState } from "react";
-import { AbsoluteButton } from "@/components/Button/Button";
 import { ClientList } from "@/components/ClientList/ClientList";
 import { toastError } from "@/lib/notifications";
 import axios from "@/lib/axios";
+import { containerVariants, itemVariants, motionStyle } from "./animations";
 
-const motionStyle = {
-  maxWidth: "1200px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: "70",
-  flexWrap: "wrap",
-  rowGap: "20px",
-  columnGap: "20px",
-  textAlign: "center",
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 12,
-      delay: 0,
-      delayChildren: 1,
-      staggerChildren: 0.5,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 1 },
-  },
-};
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 200,
-      damping: 20,
-    },
-  },
-};
 
 export default function Home() {
-  const { user, logout } = useAuth({ middleware: "auth" });
-  const components = useStore((state) => state.componentExit);
+  const { user } = useAuth({ middleware: "auth" });
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
   const [error, setError] = useState("");
-  const componentExit = useStore((state) => state.componentExit);
+  const componentExit = useAnimationStore((state) => state.componentExit);
   const [showIntro, setShowIntro] = useState(true);
+  const params = useParamsStore((state) => state.params);
+  const setParams = useParamsStore((state) => state.setParams);
+  const buildUrl = useParamsStore((state) => state.buildUrl);
 
   useEffect(() => {
     setLoading(true);
@@ -83,16 +42,19 @@ export default function Home() {
     const fetchData = async () => {
       try {
         axios.defaults.withCredentials = true;
-        const response = await axios.get(`/api/clients?user=${user.id}`);
-        setClients(response.data.data);
+        const response = await axios.get(buildUrl(params));
+        setClients(response.data.data)
+        setParams("total", response.data.total);
+        setParams("current_page", response.data.current_page);
       } catch (error) {
         setError("We could not find information. Try again later.");
         toastError("Server error. Try again later.");
+        throw error;
       } finally {
       }
     };
     fetchData();
-  }, [user, showIntro]);
+  }, [user, showIntro, params.current_page, params.search, params.bigger_than, params.smaller_than, params.category, params.active]);
 
   if (loading) {
     return (
@@ -104,19 +66,19 @@ export default function Home() {
     );
   }
 
-  console.log(loading, user, clients, error);
   if (user && !loading) {
     return (
       <>
         <AnimatePresence>
-          {!componentExit.clients && (
+          {!componentExit.clients && (<>
+            <Nav />
             <motion.div
               initial="hidden"
               animate="visible"
               exit="exit"
               variants={containerVariants}
             >
-              <Nav />
+              
               <Main>
                 <MainContainer padding={showIntro}>
                   {showIntro && (
@@ -138,11 +100,15 @@ export default function Home() {
                     </>
                   )}
                   <motion.div variants={itemVariants} style={motionStyle}>
-                    <ClientList data={clients} setShowIntro={setShowIntro} />
+                    <ClientList data={clients} setShowIntro={setShowIntro}/>
+                  </motion.div>
+                  <motion.div variants={itemVariants} style={motionStyle}>
+                  
                   </motion.div>
                 </MainContainer>
               </Main>
             </motion.div>
+            </>
           )}
         </AnimatePresence>
       </>

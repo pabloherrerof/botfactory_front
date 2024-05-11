@@ -1,11 +1,21 @@
 import styled from "styled-components";
 import { FaMagnifyingGlass } from "react-icons/fa6";
+import { useParams } from "next/navigation";
+import { useParamsStore } from "@/store/store";
 
 export const SearchBar = () => {
+    const params = useParamsStore((state) => state.params);
+    const buildUrl = useParamsStore((state) => state.buildUrl);
+    const setSearch = useParamsStore((state) => state.setParams);
+    
     return (
         <SearchBarContainer>
             <SearchBarInputContainer>
-            <SearchBarInput type="text" placeholder="Search..."/>
+            <SearchBarInput type="text" placeholder="Search..." onChange={(event) => {
+                setSearch("search", event.target.value);
+                setSearch("current_page", 0);
+                const url = buildUrl(params);
+            }}/>
             <FaMagnifyingGlass />
             </SearchBarInputContainer>
         </SearchBarContainer>
