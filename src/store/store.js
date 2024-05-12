@@ -76,7 +76,7 @@ export const useParamsStore = create((set) => ({
     ),
 }))
 
-export const useCategoriesStore = create((set) => ({
+export const useCategoriesStore = create((set, get) => ({
     categories: [],
 
     setCategories: (categories) => set(() => {
@@ -102,6 +102,7 @@ export const useCategoriesStore = create((set) => ({
         toastError("Error fetching categories");
       }
   },
+    getCategoryName: (id) => get().categories.find((category) => category.id === id)?.name || "",
 }))
 
 export const useClientsStore = create((set) => ({
@@ -160,6 +161,18 @@ export const useClientsStore = create((set) => ({
       } catch (error) {
         toastError(error.response.data.message)
       }
+      },
+
+      deleteClient: async (id) => {
+        try {
+          console.log("Hola")
+          axios.defaults.withCredentials = true;
+          await axios.delete(`/api/clients/${id}`);
+          toastSuccess("Client deleted successfully.");
+          return {ok: true}
+        } catch (error) {
+          toastError(error.response.data.message)
+        }
       },
 
 }))

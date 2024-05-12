@@ -1,3 +1,5 @@
+import { animateScroll as scroll } from 'react-scroll';
+
 export function calcularEdad(fechaNacimiento) {
 
     const fechaNac = new Date(fechaNacimiento);
@@ -15,3 +17,7 @@ export function calcularEdad(fechaNacimiento) {
 
     return edad;
 }
+
+export const scrollToTop = () => {
+    scroll.scrollToTop();
+  };

@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import { Logo } from "../Logo/Logo";
 import { CgLogOut } from "react-icons/cg";
-import { redirect } from "next/dist/server/api-utils";
 import { useAuth } from "@/hooks/auth";
-import { IoMdAddCircleOutline } from "react-icons/io";
-import { color } from "framer-motion";
+
+
 
 export const Nav = () => {
     const { logout } = useAuth({ middleware: 'auth', redirectIfNotAuthenticated: '/'})
@@ -31,7 +30,7 @@ const NavContainer = styled.nav`
     position: fixed;
     top: 0;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    z-index: 1000;
+    z-index: 100;
 
     h4{
         margin-top: 5px;

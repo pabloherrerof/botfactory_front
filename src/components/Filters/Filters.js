@@ -28,14 +28,12 @@ const Filters = () => {
   }, [categories]);
 
   useEffect(() => {
-    if(params.category || params.active || params.bigger_than || params.smaller_than) {
       setFilters({
-        category: params.category || "All",
+        category: params.category || "",
         active: params.active || "",
-        bigger_than: params.bigger_than || 0,
-        smaller_than: params.smaller_than || 0,
+        bigger_than: params.bigger_than || "",
+        smaller_than: params.smaller_than || "",
       });
-    }
   }, [params]);
 
 const onClickApplyHandler = () => {
@@ -43,14 +41,15 @@ const onClickApplyHandler = () => {
   setParams("active", filters.active === "" ? null : filters.active);
   setParams("bigger_than", filters.bigger_than === 0 ? null : filters.bigger_than);
   setParams("smaller_than", filters.smaller_than === 0 ? null : filters.smaller_than);
+  setOpen(false);
 }
 
 
 const onClickResetHandler = () => {
+  setOpen(false);
   resetFilters();
 }
 
-console.log(filters)
   return (
     <FiltersDropdownContainer>
     <FiltersDropdown open={open} onClick={() => setOpen(!open)}>
@@ -131,7 +130,7 @@ const FiltersDropdownContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: 999;
+  z-index: 98;
 `;
 
 const FiltersDropdown = styled(motion.div)`

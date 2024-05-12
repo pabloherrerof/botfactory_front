@@ -1,10 +1,7 @@
 "use client";
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
-import { TitleContainer } from "../Layout/Layout";
-import Button, { AddButton, CardButton } from "../Button/Button";
+import  { AddButton, CardButton } from "../Button/Button";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { IoMdContact } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
@@ -12,14 +9,38 @@ import { AddEditClient } from "../AddClient/AddEditClient";
 import Pagination from "../Pagination/Pagination";
 import { containerVariants, itemVariants, modalVariants, style } from "./animation";
 import { FaUserAltSlash } from "react-icons/fa";
-import { calcularEdad } from "@/util/util";
+import { calcularEdad, scrollToTop } from "@/util/util";
+import { Modal } from "../Modal/Modal";
+import { motion } from "framer-motion";
+import { useCategoriesStore } from "@/store/store";
 
 
 
 export const ClientList = ({ data, setShowIntro }) => {
   const [addClient, setAddClient] = useState(false);
   const [editClient, setEditClient] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [clientId, setClientId] = useState(null);
+  const getCategoryName = useCategoriesStore((state) => state.getCategoryName);
+  const categories = useCategoriesStore((state) => state.categories);
 
+  const onEditClickHandler = (client) => {
+    scrollToTop();
+    setEditClient(client);
+    setShowIntro(false);
+  }
+
+  const onDeleteClickHandler = (id) => {
+    setShowModal(true);
+    setClientId(id)
+  }
+
+  const onAddClickHandler = () => {
+    scrollToTop();
+    setAddClient(true);
+    setShowIntro(false);
+  }
+  
   return (
     <motion.div
       initial="hidden"
@@ -29,19 +50,17 @@ export const ClientList = ({ data, setShowIntro }) => {
       style={{ marginTop: "40px" }}
     >
       {(!addClient && !editClient) && (
+
         <motion.div variants={itemVariants} style={style}>
-          <AddButton onClick={() => {
-            setAddClient(true);
-            setShowIntro(false);
-          }}>
+          <AddButton onClick={onAddClickHandler}>
             <IoMdAddCircleOutline />
             Add Client
           </AddButton>
         </motion.div>
       )}
   
-      {!addClient && !editClient ? (
-        <>
+      {!addClient && !editClient && categories ? (
+            <>
           {data.length !== 0 ? (
             <ClientListContainer>
            { data.map((client) => (
@@ -55,25 +74,22 @@ export const ClientList = ({ data, setShowIntro }) => {
                       </ClientStatus>
                     </ClientPhotoContainer>
                     <ClientListDetails>
-                      <h5>{client.name}</h5>
+                      <h5>{client.name + " " + client.surname }</h5>
                       <p><strong>Email: </strong>{client.email}</p>
                       <p><strong>Population: </strong>{client.population}</p>
                       <p><strong>Birthday: </strong>{new Date(client.birthday).toISOString().split("T")[0]}</p>
                       <p><strong>Age: </strong>{ calcularEdad(new Date(client.birthday).toISOString().split("T")[0])}</p>
-                      <p><strong>Category: </strong>{client.category_id}</p>
+                      <p><strong>Category: </strong>{getCategoryName(client.category_id)}</p>
                       <p><strong>Created: </strong>{new Date(client.created_at).toISOString().split("T")[0]}</p>
                       <p><strong>Last update: </strong>{new Date(client.updated_at).toISOString().split("T")[0]}</p>
                     </ClientListDetails>
                   </ClientListItemContainer>
                   <ButtonsContainer>
-                    <CardButton color="">
-                      <FaEdit className="icon" onClick={() => {
-                        window.scrollTo(0, 0);
-                        setEditClient(client);
-                        setShowIntro(false);
-                      }}/>
+                    <CardButton onClick={() => onEditClickHandler(client)}>
+                      <FaEdit className="icon" />
                     </CardButton>
-                    <CardButton color="#da5649">
+                    <CardButton color="#da5649"
+                      onClick={() => onDeleteClickHandler(client.id)}>
                       <MdDelete className="icon" />
                     </CardButton>
                   </ButtonsContainer>
@@ -100,6 +116,8 @@ export const ClientList = ({ data, setShowIntro }) => {
           </motion.div>
         </ClientListContainer>
       )}
+      {showModal && (
+        <Modal setShowModal={setShowModal} clientId={clientId}/>)}
     </motion.div>
   )
 };
@@ -170,7 +188,7 @@ export const ButtonsContainer = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: ${(props) => (props.delete ? "center" : "flex-end")};
   gap: 1rem;
   max-width: ${(props) => (props.big ? "300px" : "auto")};
 

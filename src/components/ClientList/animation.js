@@ -16,7 +16,7 @@ export const modalVariants = {
       type: "spring",
       stiffness: 100,
       damping: 40,
-      delay: 0,
+      delay: 1,
     },
   },
   exit: {

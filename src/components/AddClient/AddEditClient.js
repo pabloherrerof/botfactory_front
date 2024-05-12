@@ -65,7 +65,7 @@ if(categories.length === 0)
       e.preventDefault();
       try{
         const response = await createClient(clientData)
-        if(response) {
+        if(response.ok) {
           setShowIntro(true);
           setEditClient(false);
           resetFilters();

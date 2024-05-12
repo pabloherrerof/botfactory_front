@@ -99,9 +99,15 @@ export const CardButton = styled.div`
     transition: 0.3s;
   }
 
-  svg{
+  .icon{
     font-size: 20px;
     color: white;
     margin-bottom: 0;
   }
 `;
+
+export const DeleteButton = styled(CardButton)`
+  width: 80px;
+  font-size: 14px;
+
+`
