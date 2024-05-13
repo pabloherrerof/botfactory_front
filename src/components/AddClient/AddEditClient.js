@@ -214,7 +214,7 @@ if(categories.length === 0)
         >
           Cancel
         </Button>
-        <Button> {client ? "Edit" : "Add Client"}</Button>
+        <Button> {client ? "Edit" : "Add"}</Button>
       </ButtonsContainer>
     </ClientForm>
     </>
