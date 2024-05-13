@@ -41,6 +41,7 @@ const onClickApplyHandler = () => {
   setParams("active", filters.active === "" ? null : filters.active);
   setParams("bigger_than", filters.bigger_than === 0 ? null : filters.bigger_than);
   setParams("smaller_than", filters.smaller_than === 0 ? null : filters.smaller_than);
+  setParams("current_page", 0);
   setOpen(false);
 }
 

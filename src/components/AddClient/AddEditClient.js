@@ -67,7 +67,7 @@ if(categories.length === 0)
         const response = await createClient(clientData)
         if(response.ok) {
           setShowIntro(true);
-          setEditClient(false);
+          setAddClient(false);
           resetFilters();
         }
       } catch (error) {
